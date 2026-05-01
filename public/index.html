@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Task Manager</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section id="authSection" class="auth-layout">
+        <div class="auth-shell">
+          <header class="auth-brand">
+            <div class="auth-logo" aria-hidden="true">TT</div>
+            <div class="auth-brand-text">
+              <h1 class="auth-title">Team Task Manager</h1>
+              <p class="auth-tagline">Projects, tasks, and roles — in one place.</p>
+            </div>
+          </header>
+
+          <div class="auth-card">
+            <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+              <button type="button" class="auth-tab active" id="authTabLogin" data-auth-tab="login" role="tab" aria-selected="true">
+                Sign in
+              </button>
+              <button type="button" class="auth-tab" id="authTabSignup" data-auth-tab="signup" role="tab" aria-selected="false">
+                Create account
+              </button>
+            </div>
+
+            <form id="authForm" class="auth-form" novalidate>
+              <div class="auth-field auth-field-signup hidden" id="nameFieldWrap">
+                <label for="name">Full name</label>
+                <input id="name" name="name" type="text" autocomplete="name" placeholder="Ada Lovelace" />
+              </div>
+              <div class="auth-field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
+              </div>
+              <div class="auth-field">
+                <label for="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="At least 6 characters"
+                  required
+                  minlength="6"
+                />
+              </div>
+              <div class="auth-actions" id="authActionsLogin">
+                <button type="button" class="btn btn-primary btn-block" id="loginBtn">Sign in</button>
+              </div>
+              <div class="auth-actions hidden" id="authActionsSignup">
+                <button type="button" class="btn btn-primary btn-block" id="signupBtn">Create account</button>
+              </div>
+            </form>
+          </div>
+
+          <p id="message" class="message auth-message"></p>
+        </div>
+      </section>
+
+      <section id="appSection" class="app-workspace hidden">
+        <header class="app-topbar">
+          <div class="app-topbar-brand">
+            <span class="app-mark" aria-hidden="true">TT</span>
+            <div class="app-topbar-titles">
+              <h1 class="app-topbar-title">Team Task Manager</h1>
+              <p class="app-topbar-sub">Projects, tasks, and reviews</p>
+            </div>
+          </div>
+          <div class="app-topbar-actions">
+            <span id="dashboardUserName" class="app-user-pill" aria-live="polite"></span>
+            <button id="logoutBtn" type="button" class="btn btn-ghost">Log out</button>
+          </div>
+        </header>
+
+        <section class="panel-card panel-dashboard" aria-labelledby="overview-heading">
+          <div class="panel-head">
+            <div>
+              <h2 id="overview-heading" class="panel-title">Overview</h2>
+              <p class="panel-desc">Counts across all projects you belong to.</p>
+            </div>
+          </div>
+          <div id="dashboardCounters" class="stat-grid"></div>
+        </section>
+
+        <div class="app-columns">
+          <div class="app-col">
+            <section class="panel-card">
+              <div class="panel-head">
+                <h2 class="panel-title">New project</h2>
+                <p class="panel-desc">Create a workspace and become its admin.</p>
+              </div>
+              <form id="projectForm" class="form-stack">
+                <div class="field">
+                  <label class="field-label" for="projectName">Project name</label>
+                  <input class="field-input" id="projectName" placeholder="e.g. Mobile launch" required />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="projectDescription">Description</label>
+                  <input class="field-input" id="projectDescription" placeholder="Optional short summary" />
+                </div>
+                <button type="submit" class="btn btn-primary">Create project</button>
+              </form>
+            </section>
+
+            <section class="panel-card">
+              <div class="panel-head">
+                <h2 class="panel-title">Active project</h2>
+                <p class="panel-desc">Switch context and grow the team.</p>
+              </div>
+              <div class="field">
+                <label class="field-label" for="projectSelect">Project</label>
+                <select class="field-input field-select" id="projectSelect"></select>
+              </div>
+              <div class="member-invite">
+                <span class="field-label">Invite member</span>
+                <div class="member-invite-row">
+                  <input class="field-input" id="memberEmail" type="email" placeholder="colleague@email.com" />
+                  <select class="field-input field-select field-select-narrow" id="memberRole">
+                    <option value="Member">Member</option>
+                    <option value="Admin">Admin</option>
+                  </select>
+                  <button type="button" class="btn btn-primary" id="addMemberBtn">Add</button>
+                </div>
+                <span id="memberInlineError" class="inline-error hidden">Member not found</span>
+              </div>
+            </section>
+          </div>
+
+          <div class="app-col app-col-right">
+            <section class="panel-card panel-members">
+              <div class="panel-head">
+                <h2 class="panel-title">Team</h2>
+                <p class="panel-desc">Members and roles for the selected project.</p>
+              </div>
+              <div id="projectMembersList" class="member-list">Select a project to view members.</div>
+            </section>
+
+            <section class="panel-card panel-active-projects">
+              <div class="panel-head">
+                <h2 class="panel-title">All active projects</h2>
+                <p class="panel-desc">Every workspace you are in. Project admins can mark one as completed.</p>
+              </div>
+              <div id="activeProjectsList" class="project-catalog-list"></div>
+            </section>
+          </div>
+        </div>
+
+        <section class="panel-card panel-completed-projects">
+          <div class="panel-head">
+            <h2 class="panel-title">Completed projects</h2>
+            <p class="panel-desc">Finished workspaces. They no longer appear in the active selector or dashboard totals.</p>
+          </div>
+          <div id="completedProjectsList" class="project-catalog-list"></div>
+        </section>
+
+        <section class="panel-card">
+          <div class="panel-head">
+            <h2 class="panel-title">New task</h2>
+            <p class="panel-desc">Admins assign work; assignees update progress until review.</p>
+          </div>
+          <form id="taskForm" class="form-grid-tasks">
+            <div class="field">
+              <label class="field-label" for="taskTitle">Title</label>
+              <input class="field-input" id="taskTitle" placeholder="What needs to be done?" required />
+            </div>
+            <div class="field">
+              <label class="field-label" for="taskDueDate">Due date</label>
+              <input class="field-input" id="taskDueDate" type="date" required />
+            </div>
+            <div class="field">
+              <label class="field-label" for="taskAssignedTo">Assignee</label>
+              <select class="field-input field-select" id="taskAssignedTo" required>
+                <option value="">Select assignee</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field-label" for="taskPriority">Priority</label>
+              <select class="field-input field-select" id="taskPriority">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div class="field field-span-2">
+              <label class="field-label" for="taskDescription">Description</label>
+              <textarea class="field-input field-textarea" id="taskDescription" placeholder="Context, links, acceptance criteria…" rows="3"></textarea>
+            </div>
+            <div class="field field-span-2 form-actions">
+              <button type="submit" class="btn btn-primary">Create task</button>
+            </div>
+          </form>
+          <p class="hint">Choose assignee from the dropdown (name and user id).</p>
+        </section>
+
+        <section class="panel-card panel-tasks">
+          <div class="panel-head panel-head-row">
+            <div>
+              <h2 class="panel-title">Tasks</h2>
+              <p class="panel-desc">For the project selected above.</p>
+            </div>
+            <button type="button" class="btn btn-outline" id="refreshTasksBtn">Refresh</button>
+          </div>
+          <div id="tasksList" class="task-list"></div>
+        </section>
+      </section>
+
+      <p id="messageApp" class="message message-app hidden"></p>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
